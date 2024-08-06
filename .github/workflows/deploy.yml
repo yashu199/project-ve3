@@ -20,7 +20,7 @@ jobs:
     - name: Build and push Docker image
       id: build-image
       run: |
-        ECR_REPOSITORY=your-ecr-repo-name
+        ECR_REPOSITORY=ve3ecr
         IMAGE_TAG=latest
 
         docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
