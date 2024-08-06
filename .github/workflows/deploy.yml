@@ -44,8 +44,8 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ecs-task-def.json
-        service: your-ecs-service-name
-        cluster: your-ecs-cluster-name
+        service: ser1
+        cluster: cluster1
         wait-for-service-stability: true
       env:
         AWS_REGION: ${{ secrets.AWS_REGION }}
