@@ -1,6 +1,5 @@
 name: CI/CD Pipeline
 
-
 on:
   push:
     branches:
@@ -14,19 +13,27 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
     - name: Log in to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-      with:
-        region: ${{ secrets.AWS_REGION }}
+      env:
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     - name: Build and push Docker image
       id: build-image
       run: |
-        ECR_REPOSITORY=ve3ecr
+        ECR_REPOSITORY=your-ecr-repo-name
         IMAGE_TAG=latest
 
-        docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+        docker buildx build --platform linux/amd64,linux/arm64 -t $ECR_REPOSITORY:$IMAGE_TAG .
         docker tag $ECR_REPOSITORY:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
         docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
       env:
@@ -47,8 +54,8 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ecs-task-def.json
-        service: ser1
-        cluster: cluster1
+        service: your-ecs-service-name
+        cluster: your-ecs-cluster-name
         wait-for-service-stability: true
       env:
         AWS_REGION: ${{ secrets.AWS_REGION }}
