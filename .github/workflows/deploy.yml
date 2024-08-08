@@ -30,8 +30,10 @@ jobs:
     - name: Build and push Docker image
       id: build-image
       run: |
-        ECR_REPOSITORY=ve3ecr
+        ECR_REPOSITORY=${{ secrets.ECR_REPOSITORY }}
         IMAGE_TAG=latest
+        ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+
 
         docker buildx build --platform linux/amd64,linux/arm64 -t $ECR_REPOSITORY:$IMAGE_TAG --push .
         docker tag $ECR_REPOSITORY:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
