@@ -75,6 +75,8 @@ jobs:
         if ! ./run-tests.sh; then
           gh workflow run rollback.yml
         fi
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   rollback:
     runs-on: ubuntu-latest
