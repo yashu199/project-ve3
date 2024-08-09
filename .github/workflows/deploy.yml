@@ -63,20 +63,20 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+ 
   test:
     runs-on: ubuntu-latest
     needs: deploy
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Make script executable
+      run: chmod +x ./run-tests.sh
+
     - name: Run integration tests
-      run: |
-        # Run your integration tests here
-        # If tests fail, trigger rollback
-        if ! ./run-tests.sh; then
-          gh workflow run rollback.yml
-        fi
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: ./run-tests.sh
 
   rollback:
     runs-on: ubuntu-latest
